@@ -1,0 +1,19 @@
+<div class="header-container">
+  <div>
+    <app-tab-menu></app-tab-menu>
+
+
+    <div class="top-right-corner">
+      <p-dropdown
+        [options]="languages"
+        [(ngModel)]="selectedLanguage"
+        optionLabel="label"
+        (onChange)="changeLanguage($event.value.code)">
+      </p-dropdown>
+      <app-notification></app-notification>
+    </div>
+  </div>
+</div>
+<p-toast></p-toast>
+
+<router-outlet></router-outlet>

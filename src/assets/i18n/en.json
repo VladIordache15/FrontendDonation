@@ -1,0 +1,163 @@
+{
+  "WELCOME": {
+    "Welcome_to_the_DONATION_MANAGER!": "Welcome to the DONATION MANAGER!"
+  },
+
+  "HOME": {
+    "TITLE": "Hello Angular with ngx-translate!",
+    "SELECT": "Change language"
+  },
+
+  "MENU": {
+    "USERADMINISTRATION": "User Management",
+    "CAMPAIGNMANAGEMENT": "Campaign Management",
+    "DONORMANAGEMENT": "Donor Management",
+    "DONATIONMANAGEMENT": "Donation Management",
+    "LOGOUT": "Logout",
+    "LOGIN": "Login",
+    "PASSWORD": "Password:",
+    "USERNAME": "Username:",
+    "LOGINACC": "Log into your account",
+    "SIGNIN": "Sign up",
+    "ROLES": "Permission Management",
+    "PASSWORD_REQUIRED": "Password is required",
+    "USERNAME_REQUIRED": "Username is required"
+  },
+
+  "ROLES": {
+    "NAME": "Name"
+  },
+
+  "PERMISSIONS": {
+    "GET": "Permissions",
+    "ADD": "Add",
+    "DELETE": "Delete",
+    "SELECT": "Select a permission",
+    "AVAILABLE": "Permissions available",
+    "Permission_to_add_cannot_be_null.":  "Must select a permission to add",
+    "Permission_already_exists.": "Permission already exists",
+    "User_not_found_or_permission_not_available_to_edit_roles.": "User not found or permission not available to edit roles",
+    "Permission_to_delete_cannot_be_null.": "Permission to delete cannot be null",
+    "Permission_to_delete_does_not_exist.": "Permission to delete does not exist",
+    "Added_successfully": "Added successfully.",
+    "Deleted_successfully": "Deleted successfully."
+  },
+
+  "CAMPAIGN": {
+    "NAME": "Name",
+    "PURPOSE": "Purpose",
+    "CAMPAIGNS": "campaigns",
+    "NEW": "Add campaign",
+    "MANAGE": "Manage campaigns",
+    "TOTAL": "In total there are",
+    "SAVE": "Save",
+    "CANCEL": "Cancel",
+    "DETAILS": "Campaign Details",
+    "SEARCH": "Search",
+    "DONATIONS": "Donations",
+    "DONORS": "Donors",
+    "SAVEC": "Save changes",
+    "EDIT": "Editare campanie",
+    "DELETE": "Stergere campanie"
+
+  },
+  "DONATION": {
+    "NEW": "New Donation",
+    "DELETE": "Delete Donation",
+    "EXPORT": "Export Donations",
+    "EDIT": "Edit Donation",
+    "APPROVE": "Approve Donation",
+    "AMOUNT": "Amount",
+    "APPROVEDATE": "Approve Date",
+    "APPROVED": "Approved",
+    "CREATEDDATE": "Created Date",
+    "CURRENCY": "Currency",
+    "NOTES": "Notes",
+    "APPROVEDBY": "Approved By",
+    "CAMPAIGN": "Campaign",
+    "CREATEDBY": "Created By",
+    "DONOR": "Donor",
+    "MANAGE": "Manage Donations",
+    "TOTAL": "In total there are",
+    "DONATIONS": "donations"
+  },
+  "DONOR": {
+    "DONOR": "Donor",
+    "FIRSTN": "First name",
+    "LASTN": "Last Name",
+    "ADDITIONALN": "Additional name",
+    "MAIDENN": "Maiden name",
+    "MANAGE": "Manage donors",
+    "DONORS": "donors",
+    "DETAILS": "Donor details"
+
+  },
+
+  "USER": {
+    "USER": "User",
+    "FIRST_NAME": "First Name",
+    "LAST_NAME": "Last Name",
+    "MOBILE_NUMBER": "Mobile Number",
+    "EMAIL": "Email",
+    "USERNAME": "Username",
+    "ROLES": "Roles",
+    "CAMPAIGNS": "Campaigns",
+    "NO_USERS_FOUND": "No users found.",
+    "SEARCH_KEYWORD": "Search...",
+    "CURRENT_PAGE_REPORT_TEMPLATE": "Showing {first} to {last} of {totalRecords} entries",
+    "NEW": "New",
+    "EDIT_USER": "Edit user",
+    "EDIT": "Edit",
+    "FIRST_NAME_REQUIRED": "First name is required",
+    "LAST_NAME_REQUIRED": "Last name is required",
+    "EMAIL_REQUIRED": "Email is required",
+    "MOBILE_NUMBER_REQUIRED":  "Mobile number is required",
+    "ROLES_REQUIRED": "At least a role must be selected",
+    "SELECT_A_ROLE": "Select a role",
+    "SELECT_A_CAMPAIGN": "Select a campaign",
+    "PASSWORD": "Password",
+    "ACTIVATED": "Activated",
+    "DEACTIVATED": "Deactivated",
+    "EMAIL_INVALID": "Invalid email",
+    "MOBILE_NUMBER_INVALID": "Invalid mobile number",
+    "EMAIL_IN_USE": "Email is already in use",
+    "MOBILE_NUMBER_IN_USE": "Mobile number is already in use",
+    "MODIFIED": "User modified",
+    "CREATED": "User created",
+    "SUCCESS": "Success",
+    "INFO": "Information"
+  },
+
+  "WELCOME_NEW_USER": {
+    "TITLE": "Welcome!",
+    "DETAILS": "Details: {{details}}"
+  },
+  "BUTTON_SHOW_NOTIFICATIONS": "Show Notifications",
+  "SIDEBAR": {
+    "TITLE": "Notifications",
+    "MARK_AS_READ": "Mark as Read"
+  },
+  "USER_UPDATED": {
+    "TITLE": "Update Successful",
+    "DETAILS": "Old Details: {{oldDetails}}<br>Updated Details: {{updatedDetails}}"
+  },
+  "USER_DEACTIVATED_MANUAL": {
+    "TITLE": "Account Deactivation",
+    "DETAILS": "Details: {{details}}"
+
+  },
+  "USER_DEACTIVATED_INCORRECT_PASSWORD": {
+    "TITLE": "Account Locked",
+    "DETAILS": "Account locked due to incorrect password attempts. Details: {{details}}"
+
+  },
+  "DONATION_APPROVED": {
+    "TITLE": "Donation Approved",
+    "DETAILS": "Amount: {{details}}"
+  },
+
+  "ERROR": {
+    "SURE":"Are you sure that you want to perform this action?"
+  }
+}
+

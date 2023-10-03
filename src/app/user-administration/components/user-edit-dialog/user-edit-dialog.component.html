@@ -1,0 +1,47 @@
+<div class="card flex justify-content-center">
+  <button pButton pRipple icon="pi pi-pencil" class="p-button-success p-mr-2 p-button-rounded" (click)="openEdit()"></button>
+  <p-dialog  [(visible)]="showDialog" [draggable]="false" [style]="{width: '450px'}" header="{{'USER.EDIT' | translate}}" [modal]="true" styleClass="p-fluid" (onHide)="clearForm()">
+    <ng-template pTemplate="content">
+      <form [formGroup]="registerForm">
+        <div class="p-field">
+          <label for="firstName">{{"USER.FIRST_NAME" | translate}}</label>
+          <input pInputText id="firstName" formControlName="firstName" />
+          <small *ngIf="(this.registerForm.controls.firstName.value === '' && this.registerForm.controls.firstName.dirty)">{{"USER.FIRST_NAME_REQUIRED" | translate}}</small>
+        </div>
+        <div class="p-field">
+          <label for="lastName">{{"USER.LAST_NAME" | translate}}</label>
+          <input type="text" pInputText id="lastName" formControlName="lastName"  />
+          <small class="p-invalid" *ngIf="this.registerForm.controls.lastName.value === '' && this.registerForm.controls.lastName.dirty">{{"USER.LAST_NAME_REQUIRED" | translate}}</small>
+        </div>
+        <div class="p-field">
+          <label for="email">{{"USER.EMAIL" | translate}}</label>
+          <input type="text" pInputText id="email" formControlName="email" (input)="changeMessage()" />
+          <small class="p-invalid" *ngIf="this.registerForm.controls.email.invalid || (this.registerForm.controls.email.value === '' && this.registerForm.controls.email.dirty) || this.backendEmailError">{{emailMessage}}</small>
+        </div>
+        <div class="card">
+          <label for="mobileNumber">{{"USER.MOBILE_NUMBER" | translate}}</label>
+          <input type="text" pInputText id="mobileNumber" formControlName="mobileNumber" (input)="changeMessage()"/>
+          <small class="ng-invalid" *ngIf="(this.registerForm.controls.mobileNumber.invalid || this.registerForm.controls.mobileNumber.value === '') && this.registerForm.controls.mobileNumber.dirty || this.backendMobileNumberError">{{mobileNumberMessage}}</small>
+        </div>
+        <div class="card flex justify-content-center">
+          <h5>{{"USER.ROLES" | translate}}*</h5>
+          <p-multiSelect id="roles" formControlName="roles" [options]="allRoles" appendTo="body" placeholder="{{'USER.SELECT_A_ROLE' | translate}}"
+                         [filter]="true" optionLabel="name"></p-multiSelect>
+          <small class="ng-invalid" *ngIf="Array.isArray(this.registerForm.controls.roles.value) && this.registerForm.controls.roles.value?.length === 0 && this.registerForm.controls.roles.dirty">{{"USER.ROLES_REQUIRED" | translate}}</small>
+        </div>
+        <div class="card flex justify-content-center">
+          <h5>{{"USER.CAMPAIGNS" | translate}}</h5>
+          <p-multiSelect id="campaigns" formControlName="campaigns" [options]="allCampaigns" appendTo="body" placeholder="{{'USER.SELECT_A_CAMPAIGN' | translate}}"
+                         [filter]="true" optionLabel="name"></p-multiSelect>
+        </div>
+        <div>
+        <p-toggleButton formControlName="active" onLabel="{{'USER.ACTIVATED' | translate}}" offLabel="{{'USER.DEACTIVATED' | translate}}"></p-toggleButton>
+        </div>
+      </form>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" [disabled]="registerForm.pristine" (click)="updateUser()"></button>
+    </ng-template>
+  </p-dialog>
+</div>

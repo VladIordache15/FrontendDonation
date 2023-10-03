@@ -1,0 +1,20 @@
+:host >>> header {
+  width: 18%;
+}
+:host >>> .p-datatable .p-datatable-thead  tr th {
+  padding: 0.1rem 0.1rem 0.1rem 0.5rem;
+}
+
+:host >>> p-data {
+  justify-content: center;
+}
+
+:host >>> ng-template.p-datatable-header {
+  justify-content: center;
+}
+
+#search-button {
+  display: flex;
+  align-items: center;
+}
+

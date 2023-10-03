@@ -1,0 +1,24 @@
+.blue-button {
+  background-color: cornflowerblue;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.spaced-select {
+  margin-right: 10px; /* Adjust spacing as needed */
+}
+
+.custom-select {
+  margin-bottom: 9px;
+  padding-bottom: 10px;
+  width: 220px;
+  height: 30px;
+  font-size: 14px;
+}
