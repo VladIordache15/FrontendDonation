@@ -12,6 +12,7 @@ import {TranslateService} from "@ngx-translate/core";
 import {HttpClient} from "@angular/common/http";
 import * as XLSX from 'xlsx';
 import {LoginService} from "../../login/login.service";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 
 @Component({
@@ -59,6 +60,7 @@ export class CampaignComponent implements OnInit {
   // @ts-ignore
   submitted: boolean;
   Delete: any;
+  summary2: string = '';
 
   constructor(private campaignService: CampaignService,private messageService: MessageService, private router:Router,private translate: TranslateService
               ,private cdr: ChangeDetectorRef,private http: HttpClient,private confirmationService: ConfirmationService, private loginService: LoginService) { }
@@ -99,7 +101,15 @@ export class CampaignComponent implements OnInit {
 
 
 
-
+  showSuccessAdd(mesg: string){
+    // for p-toast ---- translated message by successful insertion
+    this.translate.stream([
+      "Added_successfully"
+    ]).subscribe(translations => {
+       this.summary2 = "Added_";
+    });
+    this.messageService.add({ severity: 'success', detail: mesg})
+  }
 
 
   saveCampaign() {
@@ -113,29 +123,34 @@ export class CampaignComponent implements OnInit {
         this.removeExcessiveWhitespace(this.campaign.purpose)
       );
 
-      this.campaignService.saveCampaignToDB(newCampaign).subscribe(
-        response => {
-          console.log('added successfully:', response);
+      return this.campaignService.saveCampaignToDB(newCampaign).pipe(tap(
 
-          // Update campaignList with the newly added campaign
-          this.campaignList.push(response); // Assuming response is the newly added campaign object
-          this.campaignList = [...this.campaignList]; // Try assigning to a new reference
-          this.cdr.detectChanges();
+
+      )).subscribe(
+         (camp) => {
+
+          console.log(camp)
+          this.campaignList.push(camp)
           this.campaignDialog = false;
-          this.campaign = { id: 0, name: '', purpose: '' };
-          document.location.reload()
-        },
-        error => {
-          console.error('Error adding campaign:', error.error);
-          const errorMessage = error.error.text;
-          this.showError(errorMessage.toString());
+          this.campaign = {id: 0, name: '', purpose: ''};
+          this.showSuccessAdd("Added successfully");
+
+      },
+        (error)=>{
+           console.log(error.error.text)
+          this.showError(error.error.text)
         }
-      );
+      )
+
     } else {
       console.warn('Campaign name or purpose cannot be empty.');
       this.errorMessage = "Campaign name or purpose cannot be empty.";
+
+      return
     }
   }
+
+
   openEdit(campaign: any) {
     this.selectedCampaign = campaign;
     this.auxcampaign=Object.assign({}, this.selectedCampaign);
@@ -162,11 +177,12 @@ export class CampaignComponent implements OnInit {
       );
 
 
-      this.campaignService.updateCampaignFromDB(this.selectedCampaign.id.toString(), newCampaign).subscribe(
+       return this.campaignService.updateCampaignFromDB(this.selectedCampaign.id.toString(), newCampaign).subscribe(
         response => {
           console.log('edited successfully:', response);
-          window.location.reload()
+          // window.location.reload()
           this.campaignDialog1 = false;
+          this.showSuccessAdd("Modified successfully")
 
         },
         error => {
@@ -182,52 +198,56 @@ export class CampaignComponent implements OnInit {
       console.warn('Campaign name or purpose cannot be empty.');
       this.errorMessage = "Campaign name or purpose cannot be empty.";
     }
-
-
-
-
-
-  }
-
-
-  async deleteCampaign(campaign: any) {
-    console.log('deleting')
-    const userConfirmed = await this.confirm();
-    if (userConfirmed) {
-      const id = campaign.id;
-      console.log(id)
-      this.campaignService.deleteFromDB(id.toString()).subscribe(
-        response => {
-          console.log('Deleted successfully:', response);
-          this.campaignErrors[campaign.id] = ''; // Clear the error message if deletion was successful
-          window.location.reload()
-
-        },
-        error => {
-          this.campaignErrors[campaign.id] = error.error.text;
-          console.error('Error deleting campaign:', error.error);
-          this.showError(error.error.text)
-        }
-      );
-    }
+    return
 
 
   }
 
 
+    deleteCampaign(campaign: any) {
+     console.log('deleting')
+     // const userConfirmed = await this.confirm();
+     if (confirm("Are you sure you want to delete this campaign?")) {
+     // if (userConfirmed) {
+       const idd = campaign.id;
+       console.log(idd)
+       return this.campaignService.deleteFromDB(idd.toString()).subscribe(
+         response => {
+           console.log('Deleted successfully:', response);
+           this.campaignErrors[campaign.id] = '';
+           this.campaignList = this.campaignList.filter(camp => camp.id !== idd);
+           this.showSuccessAdd('Deleted successfully:')
 
-  async deleteSelectedCampaigns() {
-    const userConfirmed = await this.confirm();
-    if (userConfirmed) {
+
+         },
+         error => {
+           this.campaignErrors[campaign.id] = error.error.text;
+           console.error('Error deleting campaign:', error.error);
+           this.showError(error.error.text)
+         }
+       );
+     }
+     return;
+
+
+   }
+
+
+
+   deleteSelectedCampaigns() {
+
+    if (confirm("Are you sure you want to delete this campaign?")) {
       this.selectedCampaigns.forEach(campaign => {
-        const id = campaign.id;
-        console.log(id);
+        const idd = campaign.id;
+        console.log(idd);
 
-        this.campaignService.deleteFromDB(id.toString()).subscribe(
+        return this.campaignService.deleteFromDB(idd.toString()).subscribe(
           response => {
             console.log('Deleted successfully:', response);
             this.campaignErrors[campaign.id] = ''; // Clear the error message if deletion was successful
-            window.location.reload()
+            this.campaignList = this.campaignList.filter(camp => camp.id !== idd);
+            // this.campaignList.splice(idd, 1);
+            this.showSuccessAdd('Deleted successfully:')
 
           },
           error => {
@@ -238,7 +258,7 @@ export class CampaignComponent implements OnInit {
 
       })
     }
-    else console.log("asd")
+    return
   }
 
 
@@ -250,7 +270,7 @@ export class CampaignComponent implements OnInit {
       severity: 'error', // Severity level for styling (success, info, warn, error)
       summary: 'Error',
       detail: message,
-      life: 5000 // Duration in milliseconds
+      life: 1500 // Duration in milliseconds
     });
 
 
@@ -319,24 +339,6 @@ export class CampaignComponent implements OnInit {
     });
   }
 
-  async confirm(): Promise<boolean> {
-    try {
-      return new Promise((resolve) => {
-        this.confirmationService.confirm({
-          message:  this.translate.instant('ERROR.SURE'),
-          accept: () => {
-            resolve(true);
-          },
-          reject: () => {
-            resolve(false);
-            window.location.reload()
-          },
-        });
-      });
-    } catch (error) {
-      console.error('Error in confirm():', error);
-      return false;
-    }
-  }
+
 
 }

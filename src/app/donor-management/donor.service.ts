@@ -28,19 +28,16 @@ export class DonorService {
 
   }
 
-  saveDonorToDB(donorRequest: Donor):void{
-    this.http.post(this.url +'/'+this.userID,donorRequest).subscribe(log=>console.log("added successfully"))
-
+  saveDonorToDB(donorRequest: Donor): Observable<any>{
+    return this.http.post(this.url +'/'+this.userID,donorRequest)
   }
 
-  deleteFromDB(id:string){
-    this.http.delete(this.url+'/'+id+"/" + this.userID).subscribe(log=>console.log("deleted successfully"))
-
+  deleteFromDB(id:string): Observable<any>{
+    return this.http.delete(this.url+'/'+id+"/" + this.userID)
   }
 
-  updateDonorFromDB(id:string,donor:Donor){
-    this.http.put(this.url+"/"+id+"/"+this.userID,donor).subscribe(log=>console.log("updated successfully"))
-
+  updateDonorFromDB(id:string,donor:Donor): Observable<any>{
+    return this.http.put(this.url+"/"+id+"/"+this.userID,donor)
   }
 
 }

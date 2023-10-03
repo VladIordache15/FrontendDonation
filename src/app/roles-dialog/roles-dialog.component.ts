@@ -118,6 +118,7 @@ export class RolesDialogComponent implements OnInit {
       ))
       .subscribe({
       next: (role) => {
+        console.log(role)
       switch (role.id) {
         case 1:
           this.p1 = role.permissions;

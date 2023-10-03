@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {DonorService} from "../donor.service";
 import {Donor} from "../Donor";
-import {ConfirmationService} from "primeng/api";
+import {ConfirmationService, MessageService} from "primeng/api";
 import {TranslateService} from "@ngx-translate/core";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Component({
   selector: 'app-donor',
@@ -35,8 +36,10 @@ export class DonorComponent implements OnInit {
   // @ts-ignore
   submitted: boolean;
   Delete: any;
+  summary2: string = '';
 
-  constructor(private donorService: DonorService,private confirmationService:ConfirmationService, private translate: TranslateService) { }
+
+  constructor(private donorService: DonorService,private confirmationService:ConfirmationService,private messageService: MessageService, private translate: TranslateService) { }
 
   ngOnInit() {
     console.log("start donor manager")
@@ -70,6 +73,15 @@ export class DonorComponent implements OnInit {
   removeExcessiveWhitespace(input: string): string {
     return input.replace(/\s+/g, ' ').trim();
   }
+  showSuccessAdd(mesg: string){
+    // for p-toast ---- translated message by successful insertion
+    this.translate.stream([
+      "Added_successfully"
+    ]).subscribe(translations => {
+      this.summary2 = "Added_";
+    });
+    this.messageService.add({ severity: 'success', detail: mesg})
+  }
 
 
   saveDonor() {
@@ -79,18 +91,36 @@ export class DonorComponent implements OnInit {
       const newDonor = {firstName: this.removeExcessiveWhitespace(this.donor.firstName), lastName: this.removeExcessiveWhitespace(this.donor.lastName),
         additionalName: this.removeExcessiveWhitespace(this.donor.additionalName), maidenName: this.removeExcessiveWhitespace(this.donor.maidenName)}
 
-      this.donorService.saveDonorToDB(newDonor)
+      this.donorService.saveDonorToDB(newDonor).subscribe(
+        (response)=>{
+          console.log(response)
+          this.donorList.push(response)
+          this.donorDialog = false
+          this.donor = {id: 0, firstName: '', lastName: '', additionalName: '', maidenName: ''}
+          this.showSuccessAdd("Added successfully");
 
-      this.donorList = [...this.donorList]
-      this.donorDialog = false
-      this.donor = {id: 0, firstName: '', lastName: '', additionalName: '', maidenName: ''}
-      window.location.reload()
+        },
+        (error)=>{
+          console.log(error.error.text)
+          this.showError(error.error.text)
+        }
+      )
+
+
 
 
     }else{
       console.warn('Donor first name or last name cannot be empty.');
       this.errorMessage = "Campaign name or purpose cannot be empty.";
     }
+  }
+  private showError(message:string) {
+    this.messageService.add({
+      severity: 'error', // Severity level for styling (success, info, warn, error)
+      summary: 'Error',
+      detail: message,
+      life: 1500 // Duration in milliseconds
+    });
   }
 
 
@@ -106,10 +136,18 @@ export class DonorComponent implements OnInit {
       }
       const donor = this.selectedDonor
       console.log(donor.id)
-      this.donorService.updateDonorFromDB(donor.id.toString(), this.donor)
-      this.donorDialog1 = false
-      // this.donor ={id:0,firstName:'',lastName:'',additionalName:'',maidenName:''}
-      window.location.reload()
+       this.donorService.updateDonorFromDB(donor.id.toString(), this.donor).subscribe(
+        response=>{
+          console.log(response)
+          this.donorDialog1 = false
+
+        },
+         (error)=>{
+           console.log(error.error.text)
+           this.showError(error.error.text)
+         }
+      )
+
     }else {
       console.warn('Donor first name or last name cannot be empty.');
       this.errorMessage = "Campaign name or purpose cannot be empty.";
@@ -119,12 +157,24 @@ export class DonorComponent implements OnInit {
   }
 
 
-  async deleteDonor(donor: any) {
-    const userConfirmed = await this.confirm();
-    if (userConfirmed) {
+   deleteDonor(donor: any) {
+
+    if (confirm("Are you sure you want to delete this donor?")) {
+      const idd = donor.id;
+
       console.log(donor.id)
-      this.donorService.deleteFromDB(donor.id.toString())
-      window.location.reload()
+      this.donorService.deleteFromDB(donor.id.toString()).subscribe(
+        response => {
+          console.log('Deleted successfully:', response);
+          this.donorList = this.donorList.filter(camp => camp.id !== idd);
+          this.showSuccessAdd('Deleted successfully:')
+        },
+        error => {
+          console.error('Error deleting campaign:', error.error);
+          this.showError(error.error.text)
+        }
+      );
+
     }
 
 
@@ -132,19 +182,26 @@ export class DonorComponent implements OnInit {
 
 
 
-  async deleteSelectedDonors() {
-    const userConfirmed = await this.confirm();
-    if (userConfirmed) {
+   deleteSelectedDonors() {
+    if (confirm("Are you sure you want to delete this donor?")) {
       this.selectedDonors.forEach(donor => {
-        const id = donor.id;
-        console.log(id);
-
+        const idd = donor.id;
+        console.log(idd);
         // @ts-ignore
-        this.donorService.deleteFromDB(id.toString())
+        this.donorService.deleteFromDB(donor.id.toString()).subscribe(
+          response => {
+            console.log('Deleted successfully:', response);
+            this.donorList = this.donorList.filter(camp => camp.id !== idd);
+            this.showSuccessAdd('Deleted successfully:')
+          },
+          error => {
+            console.error('Error deleting campaign:', error.error);
+            this.showError(error.error.text)
+          }
+        );
       });
 
 
-      window.location.reload();
     }
   }
   openEdit(donor: any) {
@@ -171,25 +228,7 @@ export class DonorComponent implements OnInit {
     return text || "";
   }
 
-  async confirm(): Promise<boolean> {
-    try {
-      return new Promise((resolve) => {
-        this.confirmationService.confirm({
-          message:  this.translate.instant('ERROR.SURE'),
-          accept: () => {
-            resolve(true);
-          },
-          reject: () => {
-            resolve(false);
-            window.location.reload()
-          },
-        });
-      });
-    } catch (error) {
-      console.error('Error in confirm():', error);
-      return false;
-    }
-  }
+
 
 
 
