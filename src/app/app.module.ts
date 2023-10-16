@@ -54,15 +54,17 @@ import {ChangeComponent} from "./change-password/change/change.component";
 import {NgxCaptchaModule} from "ngx-captcha";
 import {DonationComponent} from "./donation-management/donation/donation.component";
 
-import {JwtInterceptor} from "./util/interceptors/JwtInterceptor";
-import {NotificationGuard} from "./util/notification-guard";
-import {DonorComponent} from "./donor-management/donor/donor.component";
+
 
 import {Role_guards} from "./util/role_guards";
 import { WelcomePageComponent } from './welcome-page/welcome-page.component';
 import { WelcomePageRoutingModule } from './welcome-page/welcome-page-routing.module';
 import {ImageModule} from "primeng/image";
 import {CampaignModule} from "./campaign-management/campaign.module";
+import {NotificationService} from "./notificationSystem/notification-service.service";
+import { Socket } from "ngx-socket-io";
+import {WrappedSocket} from "ngx-socket-io/src/socket-io.service";
+
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http);
@@ -109,7 +111,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     RolesDialogRoutingModule,
     PanelModule,
     TabMenuModule,
-
     RouterModule.forRoot([]),
     ChipsModule,
 
@@ -140,7 +141,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     provide: HTTP_INTERCEPTORS,
     useClass: Interceptor,
     multi: true
-  }, MessageService, Role_guards, LoginComponent],
+  }, MessageService, Role_guards, LoginComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

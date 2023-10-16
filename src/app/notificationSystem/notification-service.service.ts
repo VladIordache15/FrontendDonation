@@ -3,6 +3,8 @@ import { HttpClient } from "@angular/common/http";
 import { Observable, Subject, timer, throwError } from "rxjs";
 import { switchMap, retry, takeUntil } from "rxjs/operators";
 import { NotificationDTO } from "./NotificationDTO";
+import * as Stomp from 'stompjs';
+import * as SockJS from "sockjs-client";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,16 @@ export class NotificationService {
 
   private stopPollingForNotifications = new Subject<void>();
   private stopPollingForAllNotifications = new Subject<void>();
+  private webSocket!: WebSocket;
+  private notificationsSubject: Subject<NotificationDTO> = new Subject<NotificationDTO>();
+  private notificationsSubjectView: Subject<NotificationDTO> = new Subject<NotificationDTO>();
+  stompClient: Stomp.Client | null;
 
-  constructor(private http: HttpClient) { }
+
+  constructor(private http: HttpClient) {
+    this.stompClient = null;
+
+  }
 
   getNotificationsNotAppearedOnView(userId: number): Observable<NotificationDTO[]> {
     return this.http.get<NotificationDTO[]>(this.API_URL + userId);
@@ -23,42 +33,30 @@ export class NotificationService {
     return this.http.put<void>(`http://localhost:8080/api/notifications/${notificationId}`, {});
   }
 
-  pollForNotifications(userId: number): Observable<NotificationDTO[]> {
-    return timer(0, 2000).pipe(
-      takeUntil(this.stopPollingForNotifications),
-      switchMap(() => this.getNotificationsNotAppearedOnView(userId)),
-      retry({
-        delay: (err) => {
-          const isServerError = err?.message.includes('500');
-          return isServerError ? timer(10000) : throwError(() => err);
-        }
-      })
-    );
-  }
 
-  stopPollingForNotificationsMethod(): void {
-    this.stopPollingForNotifications.next();
-  }
+
+
 
   getAllNotifications(userId: number): Observable<NotificationDTO[]> {
     console.log(userId)
     return this.http.get<NotificationDTO[]>(`http://localhost:8080/api/inbox/${userId}`);
   }
 
-  pollForAllNotifications(userId: number): Observable<NotificationDTO[]> {
-    return timer(0, 2000).pipe(
-      takeUntil(this.stopPollingForAllNotifications),
-      switchMap(() => this.getAllNotifications(userId)),
-      retry({
-        delay: (err) => {
-          const isServerError = err?.message.includes('500');
-          return isServerError ? timer(10000) : throwError(() => err);
-        }
-      })
-    );
-  }
 
-  stopPollingForAllNotificationsMethod(): void {
-    this.stopPollingForAllNotifications.next();
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

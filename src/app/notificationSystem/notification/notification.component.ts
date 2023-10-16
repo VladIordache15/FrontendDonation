@@ -3,6 +3,9 @@ import {NotificationService} from "../notification-service.service";
 import {MessageService} from "primeng/api";
 import {NotificationDTO} from "../NotificationDTO";
 import {LoginService} from "../../login/login.service";
+import * as Stomp from 'stompjs';
+import * as SockJS from 'sockjs-client';
+import {Subject} from "rxjs";
 
 @Component({
   selector: 'app-notification',
@@ -11,40 +14,110 @@ import {LoginService} from "../../login/login.service";
 })
 export class NotificationComponent implements OnInit {
   notifications: NotificationDTO[] = []
-  inbox: NotificationDTO[] = []
+  notifications1: NotificationDTO[] = []
+  inbox: NotificationDTO[] =[]
   displaySidebar: boolean = false
+  private webSocket!: WebSocket;
+  usernamePage: HTMLElement | null;
+  chatPage: HTMLElement | null;
+  sidebar: HTMLFormElement | null;
+  messageForm: HTMLFormElement | null;
+  messageInput: HTMLInputElement | null;
+  messageArea: HTMLUListElement | null;
+  connectingElement: HTMLElement | null;
+  stompClient: Stomp.Client | null;
+
 
   constructor(private notificationService: NotificationService,
               private messageService: MessageService,
               private loginService: LoginService) {
+    this.usernamePage = null;
+    this.chatPage = null;
+    this.sidebar = null;
+    this.messageForm = null;
+    this.messageInput = null;
+    this.messageArea = null;
+    this.connectingElement = null;
+
+    this.stompClient = null;
   }
 
-  ngOnInit(): void {
-    this.loginService.isLoggedIn.subscribe(isLoggedIn => {
-      if (isLoggedIn) {
 
-        const userId = this.loginService.getLoggedUserId();
-        this.notificationService.pollForNotifications(userId).subscribe({
-          next: (data) => {
-            this.notifications = data
-            this.notifications.forEach((notification: NotificationDTO) => this.showNotification(notification))
-          },
-          error: (error) => console.log('Error fetching notifications:', error)
-        })
+  ngOnInit() {
+    this.usernamePage = document.querySelector('#username-page');
+    this.chatPage = document.querySelector('#chat-page');
+    this.sidebar = document.querySelector('#notification_sidebar');
+    this.messageForm = document.querySelector('#messageForm');
+    this.messageInput = document.querySelector('#message');
+    this.messageArea = document.querySelector('#messageArea');
+    this.connectingElement = document.querySelector('.connecting');
+    this.connect()
 
 
-        this.notificationService.pollForAllNotifications(userId).subscribe({
-          next: (data) => this.inbox = data,
-          error: (error) => console.log('Error fetching all notifications:', error)
-        });
-      } else {
-        this.notificationService.stopPollingForNotificationsMethod();
-        this.notificationService.stopPollingForAllNotificationsMethod()
-      }
-    })
+
   }
+  connect() {
+
+      const socket = new SockJS('http://localhost:8080/ws');
+      this.stompClient = Stomp.over(socket);
+
+      this.stompClient.connect({}, (frame:any) => {
+        this.onConnected();
+      }, (error) => {
+        this.onError(error);
+      });
+
+  }
+  onConnected() {
+    if (this.stompClient) {
+      const userId = this.loginService.getLoggedUserId();
+      this.stompClient.send("/app/notification.all",{},JSON.stringify({userId: userId}))
+      // this.stompClient.send("/app/notification.publish",{},JSON.stringify({userId: userId}))
+
+      this.stompClient.subscribe('/topic/data.response', (response: Stomp.Message) => {
+        const responseData = JSON.parse(response.body);
+
+        this.retrieval(responseData);
+      });
+
+      this.stompClient.subscribe('/topic/data.publish',(response: Stomp.Message) => {
+        const responseData = JSON.parse(response.body);
+        console.log(responseData.length)
+        for(let i=0;i<responseData.length;i++) {
+          this.showNotification(responseData[i]);
+        }
+      });
+
+
+
+
+
+
+    }
+  }
+  retrieval(lista: NotificationDTO[]) {
+
+    this.inbox=[]
+    for (let i = 0; i < lista.length; i++) {
+
+              this.inbox.push(lista[i] as NotificationDTO)
+
+    }
+    // console.log(lista)
+    // console.log(this.inbox)
+  }
+  onError(error: any) {
+    if (this.connectingElement) {
+      this.connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+      this.connectingElement.style.color = 'red';
+    }
+  }
+
+
+
 
   showNotification(notification: NotificationDTO): void {
+    console.log('afisarwe')
     this.messageService.add({
       severity: 'info',
       summary: `${notification.type}`,
@@ -55,17 +128,15 @@ export class NotificationComponent implements OnInit {
     })
   }
 
-  // handleToastClose(event: any): void {
-  //   const notificationId = event.message.data.id
-  //   this.notificationService.markNotificationAsRead(notificationId).subscribe({
-  //     next: () => console.log('Notification marked as read'),
-  //     error: (error) => console.log('Error marking notification as read:', error)
-  //   })
-  // }
+
 
   toggleSidebar(): void {
     this.messageService.clear()
+    // this.onConnected()
+    console.log(this.inbox)
+
     this.displaySidebar = !this.displaySidebar
+
   }
 
   markAsRead(notification: NotificationDTO): void {
@@ -79,4 +150,6 @@ export class NotificationComponent implements OnInit {
     });
   }
 
+  refresh() {
+  }
 }
