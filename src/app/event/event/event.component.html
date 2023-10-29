@@ -1,0 +1,149 @@
+<p-toast></p-toast>
+
+<div class="card">
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left">
+      <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText #textInput type="text" (input)="dt.filterGlobal(textInput.value, 'contains')" placeholder="{{'CAMPAIGN.SEARCH' | translate}}..." />
+      </span>
+      &nbsp;
+      <button pButton pRipple icon="pi pi-plus" class="p-button-success p-mr-2" (click)="openNew()"></button>
+      &nbsp;
+      <button pButton pRipple [label]="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedEvents()" [disabled]="!selectedEvent || !selectedEvent.length"></button>
+    </ng-template>
+
+
+  </p-toolbar>
+
+  <p-table #dt [value]="eventList" [rows]="10" [paginator]="true" [globalFilterFields]="['eventName','eventStartDate','eventStatus','notes']"
+           [(selection)]="selectedEvent" [rowHover]="true" dataKey="id"
+           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+    <ng-template pTemplate="caption">
+      <div class="p-d-flex p-ai-center p-jc-between">
+        <h2 class="p-m-0">Event manager</h2>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th pSortableColumn="eventName">Event Name<p-sortIcon field="eventName"></p-sortIcon></th>
+        <th pSortableColumn="eventStartDate">Date <p-sortIcon field="eventStartDate"></p-sortIcon></th>
+        <th pSortableColumn="description">Description <p-sortIcon field="description"></p-sortIcon></th>
+        <th pSortableColumn="openJobs">Open Jobs<p-sortIcon field="openJobs"></p-sortIcon></th>
+        <th pSortableColumn="eventStatus">Event Status<p-sortIcon field="eventStatus"></p-sortIcon></th>
+        <th pSortableColumn="notes">Notes<p-sortIcon field="notes"></p-sortIcon></th>
+        <th >Edit Event</th>
+        <th >Event Detalis and Jobs</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <!--    <ng-container *ngFor="let campaign of campaignList">-->
+    <ng-template pTemplate="body" let-event>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="event"></p-tableCheckbox>
+        </td>
+        <td (click)="toggleFullText(event,event.eventName)">{{getDisplayText(event.eventName)}}</td>
+        <td>{{event.eventStartDate}}</td>
+        <td (click)="toggleFullText(event,event.description)">{{getDisplayText(event.description)}}</td>
+        <td>{{event.openJobs}}</td>
+        <td>{{event.eventStatus}}</td>
+        <td (click)="toggleFullText(event,event.notes)">{{getDisplayText(event.notes)}}</td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="openEdit(event)"></button>
+          &nbsp;
+          <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteEvent(event)"></button>
+        </td>
+        <td>
+          <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2" (click)="goToJobs(event)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <!--    </ng-container>-->
+    <ng-template pTemplate="summary">
+      <div class="p-d-flex p-ai-center p-jc-between">
+<!--        {{'CAMPAIGN.TOTAL' | translate}} {{event ? eventList.length : 0 }}  {{'DONOR.DONORS' | translate}}.-->
+      </div>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [draggable]="false" [(visible)]="eventDialog" [style]="{width: '450px',height:'600px'}" header="{{'DONOR.DETAILS'|translate}}" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="p-field">
+      <label for="eventName">Event Name</label>
+      <input type="text" pInputText id="eventName" [(ngModel)]="event.eventName" required autofocus />
+      <small class="p-invalid" *ngIf="submitted && !event.eventName">Event name is required.</small>
+    </div>
+    <div class="p-field">
+      <label for="eventStartDate">Event Date/Time</label>
+      <div class="calendar-container">
+
+      <p-calendar id="eventStartDate" [(ngModel)]="event.eventStartDate" [showTime]="true" ></p-calendar>
+      <p> to </p>
+      <p-calendar id="eventEndDate" [(ngModel)]="event.eventEndDate" [showTime]="true" [minDate]="event.eventStartDate" ></p-calendar>
+      </div>
+
+      <small class="p-invalid" *ngIf="submitted && !event.eventStartDate">Last name is required.</small>
+    </div>
+    <div class="p-field">
+      <label for="description">Event Description</label>
+      <textarea id="description" pInputTextarea [(ngModel)]="event.description" required rows="3" cols="20"></textarea>
+    </div>
+    <div class="p-field">
+      <label for="notes">Event Notes</label>
+      <textarea id="notes" pInputTextarea [(ngModel)]="event.notes" required rows="3" cols="20"></textarea>
+    </div>
+    <small style="color: red" class="p-invalid"  *ngIf="submitted ">{{errorMessage}}</small>
+
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="{{'CAMPAIGN.CANCEL'|translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton pRipple label="{{'CAMPAIGN.SAVE'|translate}}" icon="pi pi-check" class="p-button-text" (click)="saveEvent()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+
+
+<p-dialog [draggable]="false" [(visible)]="eventDialog1" [style]="{width: '450px'}" header="{{'DONOR.DETAILS'|translate}}" [modal]="true" styleClass="p-fluid">
+  <ng-template pTemplate="content1">
+    <div class="p-field">
+      <label for="updateeventName">Event Name</label>
+      <input type="text" pInputText id="updateeventName" [(ngModel)]="event.eventName" required autofocus />
+      <small class="p-invalid" *ngIf="submitted && !event.eventName">Event name is required.</small>
+    </div>
+    <div class="p-field">
+      <label for="updateeventStartDate">Event Date/Time</label>
+      <p-calendar id="updateeventStartDate" [(ngModel)]="event.eventStartDate"></p-calendar>
+      <small class="p-invalid" *ngIf="submitted && !event.eventStartDate">Last name is required.</small>
+      <p> to </p>
+      <p-calendar id="updateeventEndDate" [(ngModel)]="event.eventEndDate"></p-calendar>
+
+    </div>
+    <div class="p-field">
+      <label for="updatedescription">Event Description</label>
+      <textarea id="updatedescription" pInputTextarea [(ngModel)]="event.description" required rows="3" cols="20"></textarea>
+    </div>
+    <div class="p-field">
+      <label for="updatenotes">Event Notes</label>
+      <textarea id="updatenotes" pInputTextarea [(ngModel)]="event.notes" required rows="3" cols="20"></textarea>
+    </div>
+    <small style="color: red" class="p-invalid"  *ngIf="submitted ">{{errorMessage}}</small>
+
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple label="{{'CAMPAIGN.CANCEL'|translate}}" icon="pi pi-times" class="p-button-text" (click)="hideDialog1()"></button>
+    <button pButton pRipple label="{{'CAMPAIGN.SAVEC'|translate}}" icon="pi pi-check" class="p-button-text" (click)="editEvent()"></button>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>
+

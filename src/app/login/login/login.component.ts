@@ -28,7 +28,8 @@ export class LoginComponent implements OnInit{
     password : ['', Validators.required],
     // recaptcha: ['', Validators.required]
   });
-  constructor(private fb : FormBuilder, private loginService: LoginService, private router: Router, private authService:AuthService) { }
+  constructor(private fb : FormBuilder, private loginService: LoginService,
+              private router: Router, private authService:AuthService) { }
 
 
   onSubmit() {

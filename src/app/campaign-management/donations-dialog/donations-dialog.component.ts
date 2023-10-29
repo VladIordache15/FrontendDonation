@@ -29,7 +29,7 @@ export class DonationsDialogComponent {
   }
 
   getDisplayText(text: string): string {
-    const maxLength = 12; // Adjust as needed
+    const maxLength = 12;
     if (text.length > maxLength && !this.fullTextMap[text]) {
       return text.substring(0, maxLength - 3) + '...';
     }

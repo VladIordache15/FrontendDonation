@@ -62,7 +62,10 @@ export class TabMenuComponent implements OnInit {
         { icon: 'pi pi-building', tooltip: this.translate.instant('MENU.CAMPAIGNMANAGEMENT'), routerLink: ['/campaign'] },
         { icon: 'pi pi-id-card', tooltip: this.translate.instant('MENU.DONORMANAGEMENT'), routerLink: ['/donor-management'] },
         { icon: 'pi pi-dollar', tooltip: this.translate.instant('MENU.DONATIONMANAGEMENT'), routerLink: ['/donation-management'] },
-        { icon: 'pi pi-user-edit', tooltip: this.translate.instant('MENU.ROLES'), routerLink: ['/roles-dialog'] }
+        { icon: 'pi pi-user-edit', tooltip: this.translate.instant('MENU.ROLES'), routerLink: ['/roles-dialog'] },
+        {icon: 'pi pi-user-edit', tooltip: this.translate.instant('MENU.USERADMINISTRATION'), routerLink:['/volunteer']},
+        {icon: 'pi pi-user-edit', tooltip: this.translate.instant('MENU.USERADMINISTRATION'), routerLink:['/event']},
+        {icon: 'pi pi-user-edit', tooltip: this.translate.instant('MENU.USERADMINISTRATION'), routerLink:['/eventJob']}
       ];
       });
     });

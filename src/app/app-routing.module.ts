@@ -53,6 +53,19 @@ const routes: Routes = [
 
   },
   {
+    path: 'signUps',
+    loadChildren: () => import('./sign-ups/sign-ups.module').then(m=> m.SignUpsModule),  },
+  {
+    path: 'eventJob',
+    loadChildren: () => import('./eventJob/event-job.module').then(m=> m.EventJobModule),  },
+  {
+    path: 'volunteer',
+    loadChildren: () => import('./volunteer-management/volunteer.module').then(m=> m.VolunteerModule),  },
+  {
+    path: 'event',
+    loadChildren: () => import('./event/event.module').then(m=> m.EventModule),  },
+
+  {
     path: 'logout',
     loadChildren: () => import('./logout/logout.module').then(m=> m.LogoutModule)
   },

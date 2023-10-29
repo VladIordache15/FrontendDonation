@@ -61,9 +61,13 @@ import { WelcomePageComponent } from './welcome-page/welcome-page.component';
 import { WelcomePageRoutingModule } from './welcome-page/welcome-page-routing.module';
 import {ImageModule} from "primeng/image";
 import {CampaignModule} from "./campaign-management/campaign.module";
-import {NotificationService} from "./notificationSystem/notification-service.service";
-import { Socket } from "ngx-socket-io";
-import {WrappedSocket} from "ngx-socket-io/src/socket-io.service";
+
+import { VolunteerComponent } from './volunteer-management/volunteer/volunteer.component';
+import { EventComponent } from './event/event/event.component';
+import {CalendarModule} from "primeng/calendar";
+import {EventModule} from "./event/event.module";
+import { EventJobComponent } from './eventJob/event-job/event-job.component';
+import { SignUpsComponent } from './sign-ups/sign-ups/sign-ups.component';
 
 
 export function HttpLoaderFactory(http: HttpClient) {
@@ -82,61 +86,67 @@ export function HttpLoaderFactory(http: HttpClient) {
     LogoutComponent,
     ChangeComponent,
     DonationComponent,
-    WelcomePageComponent
+    WelcomePageComponent,
+    VolunteerComponent,
+    EventComponent,
+    EventJobComponent,
+    SignUpsComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    AppRoutingModule,
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        AppRoutingModule,
 
 
-    // PrimeNG modules
-    DropdownModule,
-    ButtonModule,
-    DynamicDialogModule,
-    ListboxModule,
-    TooltipModule,
+        // PrimeNG modules
+        DropdownModule,
+        ButtonModule,
+        DynamicDialogModule,
+        ListboxModule,
+        TooltipModule,
 
-    // ngx-translate setup
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
-    RolesDialogRoutingModule,
-    PanelModule,
-    TabMenuModule,
-    RouterModule.forRoot([]),
-    ChipsModule,
+        // ngx-translate setup
+        TranslateModule.forRoot({
+            loader: {
+                provide: TranslateLoader,
+                useFactory: HttpLoaderFactory,
+                deps: [HttpClient],
+            },
+        }),
+        RolesDialogRoutingModule,
+        PanelModule,
+        TabMenuModule,
+        RouterModule.forRoot([]),
+        ChipsModule,
 
-    ToastModule,
-    SidebarModule,
-    CardModule,
+        ToastModule,
+        SidebarModule,
+        CardModule,
 
 
-    TableModule,
-    FileUploadModule,
-    ToastModule,
-    DialogModule,
-    RadioButtonModule,
-    PaginatorModule,
-    ConfirmDialogModule,
-    RatingModule,
-    RippleModule,
-    InputTextareaModule,
-    ToolbarModule,
-    CheckboxModule,
-    MultiSelectModule,
-    NgxCaptchaModule,
-    WelcomePageRoutingModule,
-    ImageModule,
-    CampaignModule
-  ],
+        TableModule,
+        FileUploadModule,
+        ToastModule,
+        DialogModule,
+        RadioButtonModule,
+        PaginatorModule,
+        ConfirmDialogModule,
+        RatingModule,
+        RippleModule,
+        InputTextareaModule,
+        ToolbarModule,
+        CheckboxModule,
+        MultiSelectModule,
+        NgxCaptchaModule,
+        WelcomePageRoutingModule,
+        ImageModule,
+        CampaignModule,
+        CalendarModule,
+        EventModule
+    ],
   providers: [CookieService, {
     provide: HTTP_INTERCEPTORS,
     useClass: Interceptor,

@@ -1,0 +1,8 @@
+.calendar-container {
+  display: flex;
+  align-items: center;
+}
+
+p-calendar {
+  margin-right: 15px;
+}

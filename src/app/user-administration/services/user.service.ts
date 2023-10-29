@@ -16,11 +16,7 @@ export class UserService {
 
 
   getUsers(): Observable<User[]> {
-    // const header = {
-    //   headers: new HttpHeaders()
-    //
-    //     .set("Authorization", sessionStorage.getItem("token")?? '')
-    // }
+
     return this.http.get<User[]>(this.getUrl).pipe(
       tap(users => this.userList$.next(users)),
       catchError((error) => {
